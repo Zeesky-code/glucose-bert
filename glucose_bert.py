@@ -41,7 +41,6 @@ class GlucoseDataset(Dataset):
             if len(glucose) > 0:
                 glucose = (glucose - np.mean(glucose)) / (np.std(glucose) + 1e-5)
                 
-                # Create sliding windows
                 for i in range(len(glucose) - self.seq_len):
                     all_sequences.append(glucose[i:i+self.seq_len])
                     
@@ -53,7 +52,6 @@ class GlucoseDataset(Dataset):
     def __getitem__(self, idx):
         seq = self.data[idx]
         
-        # Masking
         mask = np.random.rand(self.seq_len) < self.mask_ratio
         masked_seq = seq.copy()
         masked_seq[mask] = 0 
@@ -75,7 +73,7 @@ class PositionalEncoding(nn.Module):
         self.register_buffer('pe', pe)
 
     def forward(self, x):
-        return x + self.pe[:x.size(0), :]
+        return x + self.pe[:x.size(0), :].unsqueeze(1)
 
 class GlucoseBERT(nn.Module):
     def __init__(self, d_model, nhead, num_layers):
@@ -135,8 +133,7 @@ def main():
     print("Starting Pre-training...")
     for epoch in range(CONFIG['epochs']):
         loss = train(model, dataloader, optimizer, criterion, CONFIG['device'])
-        if (epoch + 1) % 5 == 0:
-            print(f"Epoch {epoch+1}/{CONFIG['epochs']} | Loss: {loss:.6f}")
+        print(f"Epoch {epoch+1}/{CONFIG['epochs']} | Loss: {loss:.6f}")
             
     torch.save(model.state_dict(), 'glucose_bert_pretrained.pth')
     print("Pre-training complete. Model saved.")
