@@ -42,15 +42,18 @@ python glucose_bert_finetune.py
 ```
 *Outputs: `glucose_forecaster.pth`*
 
-### 3. Evaluation
-Generate forecast plots and metrics.
-```bash
-python evaluate_glucose_bert.py
-```
-*Outputs: Forecast plots in `../analysis_results`*
+### 3.  **Evaluation & Explainability**:
+    ```bash
+    python evaluate_glucose_bert.py
+    python explain_predictions.py
+    ```
+*Outputs: Forecast plots in `../analysis_results`, Explainability plots in `explainability_results`*
+
+## Explainable AI
+The `explain_predictions.py` script uses gradient-based attribution to explain which parts of the 2-hour glucose history contribute most to each forecast. This helps clinicians understand *why* the model makes specific predictions.
 
 ## Results
-The model successfully predicts future glucose trends, capturing both rapid drops and post-meal rises. (See `analysis_results` for generated plots).
+The model successfully predicts future glucose trends. Explainability analysis reveals that the most recent glucose values (15-30 minutes ago) have the highest influence on predictions, which aligns with clinical knowledge.
 
 ## License
 MIT
